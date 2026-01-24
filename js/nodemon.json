@@ -1,0 +1,6 @@
+{
+    "watch": ["src"],
+    "ext": "ts",
+    "ignore": ["stc/**/*.spec.ts"],
+    "exec": "tsx --env-file=process.env ./src/index.ts"
+}
