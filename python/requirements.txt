@@ -1,0 +1,17 @@
+# Core dependencies
+fastapi[standard]>=0.127.0
+uvicorn
+# graphql
+strawberry-graphql[fastapi]
+# System utilities
+psutil
+#auth
+bcrypt>=5.0.0
+passlib>=1.7.4
+pwdlib[argon2]>=0.3.0
+pyjwt>=2.10.1
+# read .env file
+python-dotenv>=1.2.1
+# db
+psycopg2-binary
+sqlmodel
