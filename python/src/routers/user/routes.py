@@ -115,6 +115,7 @@ async def login_for_access_token(
 
 def verify_api_key(api_key: uuid.UUID):
     with Session(engine) as session:
+        # select many row then specific to first row
         statement = select(ApiUserBase).where(ApiUserBase.api_key == api_key)
         key_info = session.exec(statement).first()
         if not key_info:
@@ -165,6 +166,7 @@ def create_users(user: User, session: SessionDep) -> User:
 
 @router.get('/{user_id}')
 def get_users(user_id: int, session:SessionDep) -> User:
+    # select one row
     user_info = session.get(User, user_id)
     if not user_info:
         raise HTTPException(status_code=401, detail="Not found user")
