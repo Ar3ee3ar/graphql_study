@@ -16,7 +16,7 @@ from contextlib import asynccontextmanager
 # from db.fake_db import fake_users_db
 # from routers.auth.routes import router as auth_router
 from routers.user.routes import get_user, verify_api_key, insert_api_key
-from routers.user.models import User, ApiUserBase
+from db.models import User, ApiUserBase
 from routers.user.jwt_handler import SECRET_KEY, ALGORITHM
 from routers.user.routes import router as user_router
 from db.main import create_db_and_tables
@@ -93,7 +93,7 @@ def register_apiKey(api:ApiUserBase, user: Annotated[User, Depends(get_current_u
 app.include_router(graphql_app, prefix="/graphql")
 
 
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 # equivalence to command: uvicorn main:app --app-dir src --reload

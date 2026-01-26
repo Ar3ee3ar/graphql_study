@@ -4,7 +4,7 @@ import strawberry
 from strawberry.fastapi import GraphQLRouter
 from sqlmodel import Session, select, text
 
-from routers.user.models import User, ApiUserBase
+from db.models import User, ApiUserBase
 from db.main import engine
 from routers.graphql.query import Query
 from routers.graphql.mutation import Mutation

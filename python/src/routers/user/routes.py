@@ -12,7 +12,7 @@ from routers.user.jwt_handler import create_access_token
 
 import uuid 
 
-from routers.user.models import User, ApiUserBase
+from db.models import User, ApiUserBase
 from db.main import engine, get_session
 
 load_dotenv()

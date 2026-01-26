@@ -29,3 +29,6 @@ class User(SQLModel, table=True):
         nullable=False
     )
     last_login: datetime | None = Field()
+    first_name: str = Field(max_length=150, description="first name")
+    last_name: str = Field(max_length=150, description="last name")
+    email: str = Field(max_length=254, description="email")
