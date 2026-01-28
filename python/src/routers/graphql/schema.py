@@ -18,6 +18,9 @@ class CreateUser:
     # variable: type = "" (NON-NULLABLE if not provide value default will be "")
     username: str
     password: str
+    first_name: str = ""
+    last_name: str = ""
+    email: str = ""
 
 @strawberry.input
 class UpdateUser:

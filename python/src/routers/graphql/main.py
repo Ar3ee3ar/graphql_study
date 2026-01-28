@@ -9,6 +9,8 @@ from db.main import engine
 from routers.graphql.query import Query
 from routers.graphql.mutation import Mutation
 
+from routers.graphql.authen import authen_ql
+
 # @strawberry.type
 # class UserType:
 #     id: int
@@ -32,4 +34,4 @@ from routers.graphql.mutation import Mutation
 schema = strawberry.Schema(query=Query, mutation=Mutation)
 
 
-graphql_app = GraphQLRouter(schema)
+graphql_app = GraphQLRouter(schema, context_getter=authen_ql)

@@ -10,7 +10,6 @@ from fastapi import Depends, FastAPI, HTTPException, status, Security
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, APIKeyHeader
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
-from pydantic import BaseModel
 from contextlib import asynccontextmanager
 
 # from db.fake_db import fake_users_db
@@ -21,11 +20,12 @@ from routers.user.jwt_handler import SECRET_KEY, ALGORITHM
 from routers.user.routes import router as user_router
 from db.main import create_db_and_tables
 from routers.graphql.main import graphql_app
+from authen_check import get_current_user
 
 # oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token_ask") # schema that will use for get token (call /token_ask)
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/login")
-API_KEY_NAME = "X-API-Key"
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=True)
+# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/login")
+# API_KEY_NAME = "X-API-Key"
+# api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=True)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -40,33 +40,33 @@ app = FastAPI()
 # app.include_router(auth_router)
 app.include_router(user_router)
 
-class TokenData(BaseModel):
-    username: str | None = None
+# class TokenData(BaseModel):
+#     username: str | None = None
 
 class QueryRequest(BaseModel):
     question: str
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username = payload.get("sub")
-        if username is None:
-            raise credentials_exception
-        token_data = TokenData(username=username)
-    except InvalidTokenError:
-        raise credentials_exception
-    # print(f"username: {token_data.username}")
-    user = get_user(username=token_data.username)
-    # print(f"user: {user}")
-    if user is None:
-        raise credentials_exception
-    return user
+# async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+#     credentials_exception = HTTPException(
+#         status_code=status.HTTP_401_UNAUTHORIZED,
+#         detail="Could not validate credentials",
+#         headers={"WWW-Authenticate": "Bearer"},
+#     )
+#     try:
+#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+#         username = payload.get("sub")
+#         if username is None:
+#             raise credentials_exception
+#         token_data = TokenData(username=username)
+#     except InvalidTokenError:
+#         raise credentials_exception
+#     # print(f"username: {token_data.username}")
+#     user = get_user(username=token_data.username)
+#     # print(f"user: {user}")
+#     if user is None:
+#         raise credentials_exception
+#     return user
 
 @app.get('/reqKey')
 def request_apiKey(user: Annotated[User, Depends(get_current_user)]):

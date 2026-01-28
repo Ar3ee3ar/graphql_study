@@ -11,11 +11,14 @@ from db.main import engine
 @strawberry.type
 class Mutation:
     @strawberry.field
-    def createUser(self, user_input: CreateUser) -> UserType:
+    def createUser(self, user_input: CreateUser, info: strawberry.Info) -> UserType:
+        user = info.context.get("user")
+        if not user:
+            raise Exception("Authentication required")
         with Session(engine) as session:
             statement = select(User).where(User.username == user_input.username)
             db_user = session.exec(statement).first()
-            if(len(list(db_user)) == 0):
+            if(db_user is None):
                 # 1. Map input to DB Model
                 db_user = User(
                     username=user_input.username,
@@ -46,13 +49,16 @@ class Mutation:
                         detail="This username already taken",
                     )
     @strawberry.field
-    def updateUser(self, user_input: UpdateUser) -> UserType:
+    def updateUser(self, user_input: UpdateUser, info: strawberry.Info) -> UserType:
+        user = info.context.get("user")
+        if not user:
+            raise Exception("Authentication required")
         # hashed_password  = get_password_hash(user_input.old_password)
         with Session(engine) as session:
             # statement = text(f"SELECT password from users where username = '{user_input.username}';")
             statement = select(User).where(User.username == user_input.username)
             db_user = session.exec(statement).first()
-            if(len(list(db_user)) != 0):
+            if(db_user is not None):
                 if(verify_password(user_input.password, db_user.password)):
                     # changed current data
                     if(user_input.new_username is not strawberry.UNSET):
@@ -99,11 +105,14 @@ class Mutation:
                         detail="Incorrect username or password",
                     )
     @strawberry.field
-    def delUser(self, id: int) -> UserType:
+    def delUser(self, id: int, info: strawberry.Info) -> UserType:
+        user = info.context.get("user")
+        if not user:
+            raise Exception("Authentication required")
         with Session(engine) as session:
             statement = select(User).where(User.id == id)
             db_user = session.exec(statement).one()
-            if(len(list(db_user)) != 0):
+            if(db_user is not None):
                 session.delete(db_user)
                 session.commit()
             else:
